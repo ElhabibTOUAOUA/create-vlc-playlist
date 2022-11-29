@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as xml
 import os
+import re
 
 ext_list = ['.mp4', '.mkv', '.avi', '.flv', '.mov', '.wmv', '.vob',
 '.mpg','.3gp', '.m4v']		#List of extensions to be checked.
@@ -59,13 +60,14 @@ class Videos:
 		return video_files
 	
 	def get_videos(self):
-	#Returns list of video files in the directory.
+		#Returns list of video files in the directory.
+		
 		if check_subdirectories == True:
 			pathlist = [os.getcwd()]	#List of all directories to be scanned.
 			for root, dirs, files in os.walk(os.getcwd()):
 				for name in dirs:
 						subdir_path = os.path.join(root, name)
-						if subdir_path.find('\.') != -1:	#Excludes hidden directoriess.
+						if subdir_path.find('\.') != -1:	#Excludes hidden directories.
 							pass
 						else:
 							pathlist.append(subdir_path)
@@ -87,19 +89,48 @@ class Videos:
 					videos.append(location)
 			return videos
 
+	def sort_list(self, unsorted_list):
+		lst = []
+		sorted_list = []
+		for item in unsorted_list:
+			if item[0].isdigit():
+				item_num, item_name = item.split('.', 1)
+				lst.append([item_num, item_name])
+			else: continue
+
+		lst = sorted(lst, key=lambda x: int(x[0]))
+		for item in lst:
+			sorted_list.append(item[0]+"."+item[1])
+		
+		return sorted_list
+
 def main():
 	
 	playlist = Playlist()
 	videos = Videos()
 	
-	video_files = videos.get_videos()
-	video_paths = videos.edit_paths(video_files)
-	
+	# video_files = videos.get_videos()
+	# video_paths = videos.edit_paths(video_files)
+
+	base_path = os.path.join("E:\\","Courses", "Web Development","[FreeCourseSite.com] Udemy - Ultimate AWS Certified Solutions Architect Associate 2022")
+	course_name = base_path.split('\\')[-1]
+	dirTree = next(os.walk(base_path))[1]
+	if re.match(r"(^[0-9]+\.)+", dirTree[0]):
+		dirTree = videos.sort_list(dirTree)
+	video_paths = []
+
+	for sub_dir in dirTree:
+		current_dir = os.path.join(base_path, sub_dir)
+		for file in sorted(os.listdir(current_dir)):
+			if any(x in file for x in ext_list):
+				video_paths.append(os.path.join(current_dir, file))
+
+
 	for path in video_paths:
 		playlist.add_track(path)
 	
 	playlist_xml = playlist.get_playlist()
-	with open('songs.xspf','w') as mf:
+	with open(f'Output\{course_name}.xspf','w') as mf:
 		mf.write(xml.tostring(playlist_xml).decode('utf-8'))
 	
 main()
