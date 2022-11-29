@@ -112,7 +112,7 @@ def main():
 	# video_files = videos.get_videos()
 	# video_paths = videos.edit_paths(video_files)
 
-	base_path = os.path.join("E:\\","Courses", "Web Development","[FreeCourseSite.com] Udemy - Ultimate AWS Certified Solutions Architect Associate 2022")
+	base_path = os.path.join("E:\\","Courses", "Web Development","Git Become an Expert in Git & GitHub in 4 Hours")
 	course_name = base_path.split('\\')[-1]
 	dirTree = next(os.walk(base_path))[1]
 	if re.match(r"(^[0-9]+\.)+", dirTree[0]):
