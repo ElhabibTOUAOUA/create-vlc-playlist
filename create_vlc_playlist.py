@@ -90,19 +90,19 @@ class Videos:
 			return videos
 
 	def sort_list(self, unsorted_list):
-		lst = []
-		sorted_list = []
-		for item in unsorted_list:
-			if item[0].isdigit():
-				item_num, item_name = item.split('.', 1)
-				lst.append([item_num, item_name])
-			else: continue
+			lst = []
+			sorted_list = []
+			for item in unsorted_list:
+				if item[0].isdigit():
+					item_num, item_name = item.split('.', 1)
+					lst.append([item_num, item_name])
+				else: continue
 
-		lst = sorted(lst, key=lambda x: int(x[0]))
-		for item in lst:
-			sorted_list.append(item[0]+"."+item[1])
-		
-		return sorted_list
+			lst = sorted(lst, key=lambda x: int(x[0]))
+			for item in lst:
+				sorted_list.append(item[0]+"."+item[1])
+			
+			return sorted_list
 
 def main():
 	
