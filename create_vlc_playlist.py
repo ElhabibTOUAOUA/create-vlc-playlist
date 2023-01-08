@@ -2,7 +2,7 @@ import xml.etree.ElementTree as xml
 import os
 import re
 
-ext_list = ['.mp4', '.mkv', '.avi', '.flv', '.mov', '.wmv', '.vob',
+VIDEOS_EXTENSIONS = ['.mp4', '.mkv', '.avi', '.flv', '.mov', '.wmv', '.vob',
 '.mpg','.3gp', '.m4v']		#List of extensions to be checked.
 
 check_subdirectories = False		#Set false to get files only from cwd.
@@ -43,10 +43,10 @@ class Videos:
 		pass
 
 	def remove_nonvideo_files(self,file_list):
-	#Removes files whose extension is not mentioned in ext_list from list of files.
+	#Removes files whose extension is not mentioned in VIDEOS_EXTENSIONS from list of files.
 		for index,file_name in enumerate(file_list[:]):
-			#if file_name.endswith(tuple(ext_list)) or file_name.endswith(tuple(ext_list.upper())) :
-			if file_name.endswith(tuple(ext_list)) or file_name.endswith(tuple(ext.upper() for ext in ext_list)):
+			#if file_name.endswith(tuple(VIDEOS_EXTENSIONS)) or file_name.endswith(tuple(VIDEOS_EXTENSIONS.upper())) :
+			if file_name.endswith(tuple(VIDEOS_EXTENSIONS)) or file_name.endswith(tuple(ext.upper() for ext in VIDEOS_EXTENSIONS)):
 				pass
 			else:
 				file_list.remove(file_name)
@@ -90,45 +90,51 @@ class Videos:
 			return videos
 
 	def sort_list(self, unsorted_list):
-			lst = []
-			sorted_list = []
-			for item in unsorted_list:
-				if item[0].isdigit():
-					item_num, item_name = item.split('.', 1)
-					lst.append([item_num, item_name])
-				else: continue
+		lst = []
+		for item in unsorted_list:
+				# Use a regular expression to find the split character
+				split_char = re.search(r'[^\d][\d]*(?=\D)', item).group()
 
-			lst = sorted(lst, key=lambda x: int(x[0]))
-			for item in lst:
-				sorted_list.append(item[0]+"."+item[1])
-			
-			return sorted_list
+				# Split the element into the element number and element name
+				item_num, item_name = item.split(split_char, 1)
+				lst.append([item_num, item_name])
+		# Sort the list by element number
+		lst.sort(key=lambda x: int(x[0]))
+		# Build the sorted list by combining the element number and element name
+		sorted_list = [f"{item[0]}{split_char}{item[1]}" for item in lst]
+		return sorted_list
+	
+	def remove_non_numeric_elements(self, lst):
+		return [item for item in lst if item[0].isdigit()]
 
 def main():
 	
 	playlist = Playlist()
 	videos = Videos()
-	
-	# video_files = videos.get_videos()
-	# video_paths = videos.edit_paths(video_files)
 
-	base_path = os.path.join("E:\\","Courses", "Web Development","Git Become an Expert in Git & GitHub in 4 Hours")
+	# base_path = os.path.join("E:\\","Courses", "Algorithms  Data Structures","The Coding Interview Bootcamp Algorithms  Data Structures")
+	base_path = os.path.join("E:\\","Courses", "Web Development","Udemy - Node.js, Express, MongoDB & More The Complete Bootcamp 2023 2022-11")
 	course_name = base_path.split('\\')[-1]
-	dirTree = next(os.walk(base_path))[1]
-	if re.match(r"(^[0-9]+\.)+", dirTree[0]):
-		dirTree = videos.sort_list(dirTree)
+
+	# Sort the subdirectories in the order of their numbers and remove any non-numeric elements
+	dirTree = videos.sort_list(videos.remove_non_numeric_elements(next(os.walk(base_path))[1]))
 	video_paths = []
 
+	# Iterate through each subdirectory and add the sorted video file paths to the video_paths list
 	for sub_dir in dirTree:
 		current_dir = os.path.join(base_path, sub_dir)
-		for file in sorted(os.listdir(current_dir)):
-			if any(x in file for x in ext_list):
-				video_paths.append(os.path.join(current_dir, file))
+		# Get a list of files in the current directory that have a valid video file extension
+		files = [file for file in os.listdir(current_dir) if any(file.endswith(ext) for ext in VIDEOS_EXTENSIONS)]
+		# Sort the list of files by their element number
+		sorted_files = videos.sort_list(files)
+		# Add the sorted file paths to the video_paths list
+		video_paths.extend([os.path.join(current_dir, file) for file in sorted_files])
 
-
+	# Add each video file path to the playlist
 	for path in video_paths:
 		playlist.add_track(path)
 	
+	# Generate the playlist XML and write it to a file
 	playlist_xml = playlist.get_playlist()
 	with open(f'Output\{course_name}.xspf','w') as mf:
 		mf.write(xml.tostring(playlist_xml).decode('utf-8'))
