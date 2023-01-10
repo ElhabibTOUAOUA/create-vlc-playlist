@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as xml
 import os
 import re
+import tqdm
 
 VIDEOS_EXTENSIONS = ['.mp4', '.mkv', '.avi', '.flv', '.mov', '.wmv', '.vob',
 '.mpg','.3gp', '.m4v']		#List of extensions to be checked.
@@ -97,24 +98,26 @@ class Videos:
 
 				# Split the element into the element number and element name
 				item_num, item_name = item.split(split_char, 1)
-				lst.append([item_num, item_name])
+				lst.append([int(item_num), item_num,split_char, item_name])
 		# Sort the list by element number
 		lst.sort(key=lambda x: int(x[0]))
 		# Build the sorted list by combining the element number and element name
-		sorted_list = [f"{item[0]}{split_char}{item[1]}" for item in lst]
+		sorted_list = [f"{item[1]}{item[2]}{item[3]}" for item in lst]
 		return sorted_list
 	
 	def remove_non_numeric_elements(self, lst):
 		return [item for item in lst if item[0].isdigit()]
 
-def main():
+def course_playlist_create(course_name):
 	
 	playlist = Playlist()
 	videos = Videos()
 
+	# get the names of all the subdirectories in the courses folder and pass them to the 
 	# base_path = os.path.join("E:\\","Courses", "Algorithms  Data Structures","The Coding Interview Bootcamp Algorithms  Data Structures")
-	base_path = os.path.join("E:\\","Courses", "Web Development","Udemy - Node.js, Express, MongoDB & More The Complete Bootcamp 2023 2022-11")
+	base_path = os.path.join("E:\\","Courses", "Web Development",course_name)
 	course_name = base_path.split('\\')[-1]
+	playlist.title.text = course_name
 
 	# Sort the subdirectories in the order of their numbers and remove any non-numeric elements
 	dirTree = videos.sort_list(videos.remove_non_numeric_elements(next(os.walk(base_path))[1]))
@@ -136,10 +139,14 @@ def main():
 	
 	# Generate the playlist XML and write it to a file
 	playlist_xml = playlist.get_playlist()
-	with open(f'Output\{course_name}.xspf','w') as mf:
+	with open(f'Output2\{course_name}.xspf','w') as mf:
 		mf.write(xml.tostring(playlist_xml).decode('utf-8'))
 	
-main()
+if __name__ == '__main__':
+		courses_dir = os.path.join("E:\\","Courses", "Web Development")
+		courses = [course for course in os.listdir(courses_dir) if os.path.isdir(os.path.join(courses_dir, course))]
+		for course in courses:
+			course_playlist_create(course)
 
 '''
 playlist(ROOT)
