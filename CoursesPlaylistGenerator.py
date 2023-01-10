@@ -143,6 +143,9 @@ def course_playlist_create(course_name):
 		mf.write(xml.tostring(playlist_xml).decode('utf-8'))
 	
 if __name__ == '__main__':
+    # uncomment the bellow code for a single course playlist
+    # course_playlist_create("The Coding Interview Bootcamp Algorithms  Data Structures")
+    
 		courses_dir = os.path.join("E:\\","Courses", "Web Development")
 		courses = [course for course in os.listdir(courses_dir) if os.path.isdir(os.path.join(courses_dir, course))]
 		for course in courses:
