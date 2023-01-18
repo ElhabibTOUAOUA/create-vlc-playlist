@@ -115,7 +115,7 @@ def course_playlist_create(course_name):
 
 	# get the names of all the subdirectories in the courses folder and pass them to the 
 	# base_path = os.path.join("E:\\","Courses", "Algorithms  Data Structures","The Coding Interview Bootcamp Algorithms  Data Structures")
-	base_path = os.path.join("E:\\","Courses", "Web Development",course_name)
+	base_path = os.path.join("E:\\","Courses", "Algorithms and Data Structures",course_name)
 	course_name = base_path.split('\\')[-1]
 	playlist.title.text = course_name
 
@@ -143,10 +143,10 @@ def course_playlist_create(course_name):
 		mf.write(xml.tostring(playlist_xml).decode('utf-8'))
 	
 if __name__ == '__main__':
-    # uncomment the bellow code for a single course playlist
-    # course_playlist_create("The Coding Interview Bootcamp Algorithms  Data Structures")
-    
-		courses_dir = os.path.join("E:\\","Courses", "Web Development")
+		# uncomment the bellow code for a single course playlist
+		# course_playlist_create("The Coding Interview Bootcamp Algorithms  Data Structures")
+		
+		courses_dir = os.path.join("E:\\","Courses", "Algorithms and Data Structures")
 		courses = [course for course in os.listdir(courses_dir) if os.path.isdir(os.path.join(courses_dir, course))]
 		for course in courses:
 			course_playlist_create(course)
