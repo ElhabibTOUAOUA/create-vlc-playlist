@@ -115,7 +115,7 @@ def course_playlist_create(course_name):
 
 	# get the names of all the subdirectories in the courses folder and pass them to the 
 	# base_path = os.path.join("E:\\","Courses", "Algorithms  Data Structures","The Coding Interview Bootcamp Algorithms  Data Structures")
-	base_path = os.path.join("E:\\","Courses", "Algorithms and Data Structures",course_name)
+	base_path = os.path.join("E:\\","Courses", "Web Development", course_name)
 	course_name = base_path.split('\\')[-1]
 	playlist.title.text = course_name
 
@@ -139,17 +139,17 @@ def course_playlist_create(course_name):
 	
 	# Generate the playlist XML and write it to a file
 	playlist_xml = playlist.get_playlist()
-	with open(f'Output2\{course_name}.xspf','w') as mf:
+	with open(f'Output\{course_name}.xspf','w') as mf:
 		mf.write(xml.tostring(playlist_xml).decode('utf-8'))
 	
 if __name__ == '__main__':
 		# uncomment the bellow code for a single course playlist
-		# course_playlist_create("The Coding Interview Bootcamp Algorithms  Data Structures")
+		course_playlist_create("Udemy - React, NodeJS, Express & MongoDB - The MERN Fullstack Guide 2022-8")
 		
-		courses_dir = os.path.join("E:\\","Courses", "Algorithms and Data Structures")
-		courses = [course for course in os.listdir(courses_dir) if os.path.isdir(os.path.join(courses_dir, course))]
-		for course in courses:
-			course_playlist_create(course)
+		# courses_dir = os.path.join("E:\\","Courses", "Algorithms and Data Structures")
+		# courses = [course for course in os.listdir(courses_dir) if os.path.isdir(os.path.join(courses_dir, course))]
+		# for course in courses:
+		# 	course_playlist_create(course)
 
 '''
 playlist(ROOT)
